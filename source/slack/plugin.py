@@ -251,7 +251,7 @@ def on_worker_process(data):
     original_file_path = data.get('original_file_path', '')
     
     # Create message
-    message = f"*Conversion Started*\nOriginal File: `{original_file_path}`"
+    message = f"🏃 *Conversion Started*\nOriginal File: `{original_file_path}`"
     
     # Add info about processing
     if file_in != original_file_path:
