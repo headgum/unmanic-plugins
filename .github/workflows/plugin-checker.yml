@@ -178,18 +178,18 @@ jobs:
         fi
 
     # Import scripts from template branch
-    - name: Pull in scripts from template branch
-      if: success()
-      id: read_template_tree
-      run: |
-        git fetch origin template
-        git read-tree --prefix=template -u origin/template
-        cp -rf ./template/scripts ./
-        git rm -r --cached template
-        if [ ! -e ./scripts/generate_repository.py ]; then
-            echo "Unable to build repo. Could not find generator script."
-            exit 1
-        fi
+    # - name: Pull in scripts from template branch
+    #   if: success()
+    #   id: read_template_tree
+    #   run: |
+    #     git fetch origin template
+    #     git read-tree --prefix=template -u origin/template
+    #     cp -rf ./template/scripts ./
+    #     git rm -r --cached template
+    #     if [ ! -e ./scripts/generate_repository.py ]; then
+    #         echo "Unable to build repo. Could not find generator script."
+    #         exit 1
+    #     fi
 
     # Setup python environment
     - name: Set up Python 3.8
