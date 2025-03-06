@@ -167,14 +167,14 @@ jobs:
         submodules: recursive
 
     # Ensure repo is checked out
-    # - name: Check repo for config file
-    #   if: success()
-    #   id: ensure_repo
-    #   run: |
-    #     if [ ! -e ./config.json ]; then
-    #         echo "Unable to build repo. Was not checked out."
-    #         exit 1
-    #     fi
+    - name: Check repo for config file
+      if: success()
+      id: ensure_repo
+      run: |
+        if [ ! -e ./config.json ]; then
+            echo "Unable to build repo. Was not checked out."
+            exit 1
+        fi
 
     # Import scripts from template branch
     - name: Pull in scripts from template branch
