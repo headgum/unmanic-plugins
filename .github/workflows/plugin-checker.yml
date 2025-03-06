@@ -154,14 +154,15 @@ jobs:
         path: ./artifacts/
     - name: Read success file
       id: previous_jobs_success
+      # run: |
+      #   IS_SUCCESS=$(cat ./artifacts/success_file/success_file.txt)
+      #   echo "name=IS_SUCCESS::${IS_SUCCESS}" >> $GITHUB_OUTPUT
+      #   rm -rfv ./artifacts
       run: |
-        IS_SUCCESS=$(cat ./artifacts/success_file/success_file.txt)
-        echo "name=IS_SUCCESS::${IS_SUCCESS}" >> $GITHUB_OUTPUT
         rm -rfv ./artifacts
 
     # Checkout
     - name: Checkout
-      if: steps.previous_jobs_success.outputs.IS_SUCCESS == 'true'
       uses: actions/checkout@v4
       with:
         submodules: recursive
