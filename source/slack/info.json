@@ -12,5 +12,5 @@
         "on_postprocessor_file_movement": 0
     },
     "tags": "slack,notification,file movement",
-    "version": "0.2.0"
+    "version": "0.3.0"
 }
