@@ -1,0 +1,27 @@
+{
+    "repo": {
+        "id": "repository.slack-bot",
+        "name": "Slack Bot",
+        "icon": "",
+        "repo_data_directory": "https://raw.githubusercontent.com/headgum/unmanic-plugins/repo/",
+        "repo_data_url": "https://raw.githubusercontent.com/headgum/unmanic-plugins/repo/repo.json"
+    },
+    "plugins": [
+        {
+            "author": "Headgum",
+            "compatibility": [
+                2
+            ],
+            "description": "Send Slack notifications when files are moved or tasks are completed in Unmanic.",
+            "icon": "",
+            "id": "slack",
+            "name": "Slack Notifier",
+            "priorities": {
+                "on_postprocessor_task_results": 0,
+                "on_postprocessor_file_movement": 0
+            },
+            "tags": "slack,notification,file movement",
+            "version": "0.3.3"
+        }
+    ]
+}
