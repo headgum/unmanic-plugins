@@ -21,7 +21,7 @@ jobs:
     steps:
     # Checkout
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -156,13 +156,13 @@ jobs:
       id: previous_jobs_success
       run: |
         IS_SUCCESS=$(cat ./artifacts/success_file/success_file.txt)
-        echo ::set-output name=IS_SUCCESS::${IS_SUCCESS}
+        echo "name=IS_SUCCESS::${IS_SUCCESS}" >> $GITHUB_OUTPUT
         rm -rfv ./artifacts
 
     # Checkout
     - name: Checkout
       if: steps.previous_jobs_success.outputs.IS_SUCCESS == 'true'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
 
@@ -193,13 +193,13 @@ jobs:
     # Setup python environment
     - name: Set up Python 3.8
       if: success()
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.8
 
     # Setup node environment
     - name: Set up node 16
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '16'
 
