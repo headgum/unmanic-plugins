@@ -22,10 +22,92 @@ class Settings(PluginSettings):
         "notify_on_task_completion": True,
         "notify_on_file_test": True,
         "notify_on_worker_process": True,
+        "create_synology_public_links": False,
+        "synology_url": "http://your-synology-ip:5000",
+        "synology_username": "",
+        "synology_password": "",
+        "synology_link_expiry": "0",  # 0 means never expire
     }
 
     def __init__(self, *args, **kwargs):
         super(Settings, self).__init__(*args, **kwargs)
+
+
+def create_synology_public_link(file_path, settings):
+    """
+    Create a public link for a file on Synology NAS
+    
+    :param file_path: The path to the file on the Synology NAS
+    :param settings: The plugin settings
+    :return: The public link URL or None if failed
+    """
+    if not settings.get_setting('create_synology_public_links'):
+        return None
+        
+    syno_url = settings.get_setting('synology_url')
+    username = settings.get_setting('synology_username')
+    password = settings.get_setting('synology_password')
+    
+    if not syno_url or not username or not password:
+        logger.error("Synology credentials not properly configured")
+        return None
+    
+    try:
+        # Step 1: Authenticate
+        login_url = f"{syno_url}/webapi/auth.cgi"
+        login_params = {
+            "api": "SYNO.API.Auth",
+            "version": "6",
+            "method": "login",
+            "account": username,
+            "passwd": password,
+            "session": "FileStation",
+            "format": "sid"
+        }
+        
+        login_res = requests.get(login_url, params=login_params).json()
+        if not login_res.get("success", False):
+            logger.error(f"Failed to authenticate with Synology: {login_res.get('error', {}).get('code', 'Unknown error')}")
+            return None
+            
+        sid = login_res["data"]["sid"]
+        
+        # Step 2: Create a public link
+        share_url = f"{syno_url}/webapi/entry.cgi"
+        share_params = {
+            "api": "SYNO.FileStation.Sharing",
+            "version": "3",
+            "method": "create",
+            "path": file_path,
+            "password": "",
+            "expire_time": settings.get_setting('synology_link_expiry'),
+            "_sid": sid
+        }
+        
+        share_res = requests.get(share_url, params=share_params).json()
+        if not share_res.get("success", False):
+            logger.error(f"Failed to create Synology public link: {share_res.get('error', {}).get('code', 'Unknown error')}")
+            return None
+            
+        public_link = share_res["data"]["links"][0]["url"]
+        
+        # Step 3: Logout
+        logout_url = f"{syno_url}/webapi/auth.cgi"
+        logout_params = {
+            "api": "SYNO.API.Auth",
+            "version": "6",
+            "method": "logout",
+            "session": "FileStation",
+            "_sid": sid
+        }
+        
+        requests.get(logout_url, params=logout_params)
+        
+        return public_link
+        
+    except Exception as e:
+        logger.error(f"Error creating Synology public link: {str(e)}")
+        return None
 
 
 def send_slack_notification(webhook_url, message, channel=None, username=None, icon_emoji=None):
@@ -305,8 +387,18 @@ def on_postprocessor_task_results(data):
     
     if destination_files:
         message += "\nDestination Files:"
+        
+        # Check if Synology public links should be created
+        create_links = settings.get_setting('create_synology_public_links')
+        
         for dest_file in destination_files:
             message += f"\n- `{dest_file}`"
+            
+            # Create and add Synology public link if enabled
+            if create_links and task_success and move_success:
+                public_link = create_synology_public_link(dest_file, settings)
+                if public_link:
+                    message += f" - <{public_link}|Download Link>"
     
     # Send notification
     send_slack_notification(
