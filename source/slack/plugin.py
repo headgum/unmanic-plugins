@@ -383,7 +383,7 @@ def on_postprocessor_task_results(data):
     else:
         status = "🔥 *Video Conversion Failed*"
     
-    message = f"*{status}*\nSource: `{source_path}`"
+    message = f"{status}\nSource: `{source_path}`"
     
     if destination_files:
         message += "\nDestination Files:"
