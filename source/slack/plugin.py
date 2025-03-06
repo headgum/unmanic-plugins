@@ -165,11 +165,11 @@ def on_postprocessor_task_results(data):
     
     # Create message
     if task_success and move_success:
-        status = "✅ *Success*"
+        status = "✅ *Video Successfully Converted*"
     else:
-        status = "❌ *Failed*"
+        status = "🔥 *Video Conversion Failed*"
     
-    message = f"*Task Completed: {status}*\nSource: `{source_path}`"
+    message = f"*{status}*\nSource: `{source_path}`"
     
     if destination_files:
         message += "\nDestination Files:"
