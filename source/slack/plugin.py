@@ -251,14 +251,14 @@ def on_worker_process(data):
     original_file_path = data.get('original_file_path', '')
     
     # Create message
-    message = f"*Worker Process Started*\nOriginal File: `{original_file_path}`"
+    message = f"*Conversion Started*\nOriginal File: `{original_file_path}`"
     
     # Add info about processing
     if file_in != original_file_path:
         message += f"\nProcessing: `{file_in}`"
     
-    if file_out != file_in:
-        message += f"\nOutput: `{file_out}`"
+    # if file_out != file_in:
+    #     message += f"\nOutput: `{file_out}`"
     
     # Add info about command if present
     exec_command = data.get('exec_command', [])
@@ -386,13 +386,13 @@ def on_postprocessor_task_results(data):
     message = f"{status}\nSource: `{source_path}`"
     
     if destination_files:
-        message += "\nDestination Files:"
+        message += "\nOutput File:"
         
         # Check if Synology public links should be created
         create_links = settings.get_setting('create_synology_public_links')
         
         for dest_file in destination_files:
-            message += f"\n- `{dest_file}`"
+            message += f" `{dest_file}`"
             
             # Create and add Synology public link if enabled
             if create_links and task_success and move_success:
